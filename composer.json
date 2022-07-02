@@ -6,12 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "cknow/laravel-money": "^7.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^2.14.1",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+        "livewire/livewire": "^2.10",
+        "staudenmeir/laravel-adjacency-list": "^1.0"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.6",
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^1.10",
         "laravel/sail": "^1.0.1",
