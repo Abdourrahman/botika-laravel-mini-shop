@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Variation;
 use Livewire\Component;
 
 class ProductSelector extends Component
@@ -14,7 +15,15 @@ class ProductSelector extends Component
      */
     public $product;
 
+    /**
+     * initialVariation
+     *
+     * @var mixed
+     */
     public $initialVariation;
+
+
+    public $skuVariant;
 
     /**
      * mount
@@ -27,6 +36,37 @@ class ProductSelector extends Component
     }
 
 
+    /**
+     * listeners
+     *
+     * @var array
+     */
+    protected $listeners = [
+        'skuVariantSelected'
+    ];
+
+    
+
+    /**
+     * skuVariantSelected
+     *
+     * @param  mixed $variantId
+     * @return void
+     */
+    public function skuVariantSelected($variantId)
+    {
+        if (!$variantId) {
+            $this->skuVariant = null;
+            return;
+        }
+        $this->skuVariant = Variation::find($variantId);
+    }
+
+    /**
+     * render
+     *
+     * @return void
+     */
     public function render()
     {
         return view('livewire.product-selector');
