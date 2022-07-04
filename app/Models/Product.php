@@ -19,5 +19,15 @@ class Product extends Model
     public function formattedPrice()
     {
         return money($this->price);
+    }    
+   
+    /**
+     * variations
+     *
+     * @return void
+     */
+    public function variations()
+    {
+        return $this->hasMany(Variation::class);
     }
 }
