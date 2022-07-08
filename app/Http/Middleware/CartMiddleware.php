@@ -21,7 +21,9 @@ class CartMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+
         if (!$this->cart->exists()) {
+
             $this->cart->create($request->user());
         }
         return $next($request);

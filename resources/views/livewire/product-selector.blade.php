@@ -8,7 +8,7 @@
         <div class="font-semibold text-lg">
             {{ $skuVariant->formattedPrice() }}
         </div>
-        <x-button>Add to cart</x-button>
+        <x-button wire:click="addToCart">Add to cart</x-button>
     </div>
     @endif
 
