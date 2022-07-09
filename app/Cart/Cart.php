@@ -90,12 +90,29 @@ class Cart implements CartInterface
 
             $quantity += $existingVariation->pivot->quantity;
         }
-        
-        
+
+
         $this->instance()->variations()->syncWithoutDetaching([
             $variation->id => [
                 'quantity' => min($quantity, $variation->stockCount())
             ]
+        ]);
+    }
+
+    public function isEmpty()
+    {
+        return $this->contents()->count() == 0;
+    }
+
+    public function remove(Variation $variation)
+    {
+        $this->instance()->variations()->detach($variation);
+    }
+
+    public function changeQuantity($variation, $quantity)
+    {
+        $this->instance()->variations()->updateExistingPivot($variation->id, [
+            'quantity' => min($quantity, $variation->stockCount())
         ]);
     }
 
@@ -114,6 +131,8 @@ class Cart implements CartInterface
             return $this->instance;
         }
 
-        return $this->instance =  ModelsCart::whereUuid($this->session->get(config('cart.session.key')))->first();
+        return $this->instance =  ModelsCart::query()
+            ->with('variations.product', 'variations.ancestorsAndSelf', 'variations.descendantsAndSelf.stocks',  'variations.media')
+            ->whereUuid($this->session->get(config('cart.session.key')))->first();
     }
 }
