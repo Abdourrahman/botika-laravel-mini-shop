@@ -12,12 +12,12 @@
                 <div class="space-y-1 flex items-center justify-between">
                     <div class="font-semibold">Subtotal</div>
                     <h1 class="font-semibold text-xl">
-                        Formnatted subtotal
+                        {{ $cart->formattedSubtotal()}}
                     </h1>
                 </div>
             </div>
 
-            <a href="/checkout">Checkout</a>
+            <x-button-anchor href="/checkout">Checkout</x-button-anchor>
         </div>
 
     </div>

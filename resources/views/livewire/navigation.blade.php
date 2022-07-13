@@ -2,7 +2,7 @@
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex">
+            <div class="flex flex-grow">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
@@ -11,10 +11,14 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex flex-grow">
+                    <x-nav-link href="/" :active="request()->routeIs('home')">
+                        Categories
                     </x-nav-link>
+
+                    <div class="flex items-center flex-grow">
+                        <input type="search" wire:model.debounce.500ms="searchQuery" placeholder="Search for products" class="flex-grow text-sm h-10 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
                 </div>
             </div>
 
@@ -23,7 +27,7 @@
 
                 @guest
                 <a href="/cart" class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300
-                focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                focus:outline-none focus:text-gray-700 focusproducts:border-gray-300 transition duration-150 ease-in-out">
                     Cart ({{ $this->cart->contentsCount()}})
                 </a>
                 <a href="/login" class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300
@@ -80,8 +84,8 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+            <x-responsive-nav-link href="/" :active="request()->routeIs('home')">
+                Categories
             </x-responsive-nav-link>
         </div>
 
@@ -107,4 +111,29 @@
             @endauth
         </div>
     </div>
+
+    @if ($searchQuery)
+
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="grid grid-cols-2 column-gap-6">
+            @forelse ($products as $product)
+            <a href="/products/{{$product->slug}}" class="border-b py-3 space-y-2 flex items-center">
+                <div>
+                    <div class="font-semibold text-lg">{{ $product->formattedPrice()}}</div>
+                    <div>{{ $product->title }}</div>
+                </div>
+            </a>
+            @empty
+            <div>
+                No product
+            </div>
+            @endforelse
+        </div>
+
+        <a href="#" class="inline-block text-indigo-500 mt-6" wire:click="clearSearch">Clear search</a>
+    </div>
+
+
+    @endif
+
 </nav>

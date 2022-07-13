@@ -8,10 +8,13 @@
         "php": "^8.0.2",
         "cknow/laravel-money": "^7.0",
         "guzzlehttp/guzzle": "^7.2",
+        "http-interop/http-factory-guzzle": "^1.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^2.14.1",
+        "laravel/scout": "^9.4",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.10",
+        "meilisearch/meilisearch-php": "^0.24.0",
         "spatie/laravel-medialibrary": "^10.0.0",
         "staudenmeir/laravel-adjacency-list": "^1.0"
     },
