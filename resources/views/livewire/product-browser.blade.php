@@ -14,13 +14,17 @@
             </div>
 
             <div class="space-y-6">
+                @if ($category->products->count())
+
                 <div class="space-y-1">
                     <div class="font-semibold">Max price ({{ money($priceRange['max']) }})</div>
                     <div class="flex items-center space-x-2">
                         <input type="range" step="" min="0" max="{{ $maxPrice }}" wire:model="priceRange.max">
                     </div>
                 </div>
+                @endif
 
+                @if ($products->count())
                 @foreach ($filters as $title => $filter )
                 <div class="space-y-1">
                     <div class="font-semibold">{{ Str::title($title)}}</div>
@@ -32,6 +36,7 @@
                     @endforeach
                 </div>
                 @endforeach
+                @endif
             </div>
         </div>
     </div>
