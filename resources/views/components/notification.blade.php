@@ -1,4 +1,15 @@
-<div x-cloak x-data="{ body :''}" x-show="body" x-on:notification.window="body = $event.detail.body; setTimeout(() => body = '' , $event.detail.timeout || 2000)" class="fixed inset-0 flex px-4 py-6 items-start pointer-events-none">
+<div x-init="
+    @if (session()->has('notification'))
+        window.onload = () => {
+            window.dispatchEvent(new CustomEvent('notification',{
+                detail:{
+                    body : '{{ session('notification') }}',
+                    timeout : 3000
+                }
+            }));
+        }
+    @endif
+" x-cloak x-data="{ body :''}" x-show="body" x-on:notification.window="body = $event.detail.body; setTimeout(() => body = '' , $event.detail.timeout || 2000)" class="fixed inset-0 flex px-4 py-6 items-start pointer-events-none">
     <div class="w-full flex flex-col items-center space-y-4">
         <div class="max-w-sm w-full bg-gray-900 rounded-lg pointer-events-auto">
             <div class="p-4 flex items-center">

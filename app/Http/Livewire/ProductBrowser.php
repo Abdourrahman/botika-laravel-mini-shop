@@ -49,7 +49,7 @@ class ProductBrowser extends Component
                     return $value->map(fn ($value) => $key . ' = "' . $value . '"');
                 })
                 ->flatten()
-                ->join(' AND ');
+                ->join(' OR ');
 
             // $options['filter'] = 'category_ids = ' . $this->category->id;
 
@@ -64,7 +64,6 @@ class ProductBrowser extends Component
             }
 
             return $meillisearch->search($query, $options);
-            
         })->raw();
 
         $products = $this->category->products->find(collect($search['hits'])->pluck('id'));

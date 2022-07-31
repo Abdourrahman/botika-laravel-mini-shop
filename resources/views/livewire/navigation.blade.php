@@ -5,7 +5,7 @@
             <div class="flex flex-grow">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('home') }}">
                         <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
                     </a>
                 </div>
@@ -41,6 +41,10 @@
                 @endguest
 
                 @auth
+                <a href="/cart" class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300
+                focus:outline-none focus:text-gray-700 focusproducts:border-gray-300 transition duration-150 ease-in-out">
+                    Cart ({{ $this->cart->contentsCount()}})
+                </a>
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
@@ -55,6 +59,10 @@
                     </x-slot>
 
                     <x-slot name="content">
+
+                        <x-dropdown-link :href="route('orders')">
+                            Orders
+                        </x-dropdown-link>
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

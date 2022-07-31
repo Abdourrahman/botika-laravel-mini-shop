@@ -2,12 +2,19 @@
 
 namespace App\Cart;
 
+use Exception;
 use App\Models\User;
 use App\Models\Variation;
 use App\Models\Cart as ModelsCart;
+use function Clue\StreamFilter\fun;
+
 use App\Cart\Contracts\CartInterface;
+use App\Cart\Exceptions\QuantityNoLongerAvailable;
 use Illuminate\Session\SessionManager;
 
+/**
+ * Cart
+ */
 class Cart implements CartInterface
 {
     /**
@@ -34,9 +41,33 @@ class Cart implements CartInterface
      */
     public function exists()
     {
-        return $this->session->has(config('cart.session.key'));
+        return $this->session->has(config('cart.session.key')) && $this->instance();
     }
 
+    /**
+     * destroy
+     *
+     * @return void
+     */
+    public function destroy()
+    {
+        $this->session->forget(config('cart.session.key'));
+        $this->instance()->delete();
+    }
+
+    /**
+     * associate
+     *
+     * @param  mixed $user
+     * @return void
+     */
+    public function associate(User $user)
+    {
+
+        $this->$instance()->user()->associate($user);
+
+        $this->$instance()->save();
+    }
     /**
      * create
      *
@@ -108,7 +139,13 @@ class Cart implements CartInterface
     {
         return $this->contents()->count() == 0;
     }
-
+    
+    /**
+     * remove
+     *
+     * @param  mixed $variation
+     * @return void
+     */
     public function remove(Variation $variation)
     {
         $this->instance()->variations()->detach($variation);
@@ -154,7 +191,12 @@ class Cart implements CartInterface
             ->whereUuid($this->session->get(config('cart.session.key')))->first();
     }
 
-
+    
+    /**
+     * subtotal
+     *
+     * @return void
+     */
     public function subtotal()
     {
         return  $this->instance()->variations->reduce(function ($carry, $variation) {
@@ -165,5 +207,61 @@ class Cart implements CartInterface
     public function formattedSubtotal()
     {
         return money($this->subtotal());
+    }
+    
+    /**
+     * verifyAvailableQuantities
+     *
+     * @return void
+     */
+    public function verifyAvailableQuantities()
+    {
+        $this->instance()->variations->each(function ($variation) {
+            if ($variation->pivot->quantity > $variation->stocks->sum('amount')) {
+                throw new QuantityNoLongerAvailable('Stock reduced');
+            }
+        });
+    }
+    
+    /**
+     * syncAvailableQuantities
+     *
+     * @return void
+     */
+    public function syncAvailableQuantities()
+    {
+        $syncedQuantities = $this->instance()->variations->mapWithKeys(function ($variation) {
+            $quantity = $variation->pivot->quantity > $variation->stocks->sum('count')
+                ? $variation->stockCount()
+                : $variation->pivot->quantity;
+            return [
+                $variation->id => ['quantity' => $quantity]
+            ];
+        })->reject(function ($syncedQuantity) {
+            return $syncedQuantity['quantity'] == 0;
+        })->toArray();
+
+        $this->instance()->variations()->sync($syncedQuantities);
+        $this->clearInstanceCache();
+    }
+    
+    /**
+     * clearInstanceCache
+     *
+     * @return void
+     */
+    public function clearInstanceCache()
+    {
+        $this->instance = null;
+    }
+    
+    /**
+     * removeAll
+     *
+     * @return void
+     */
+    public function removeAll()
+    {
+        $this->instance()->variations()->detach();
     }
 }
